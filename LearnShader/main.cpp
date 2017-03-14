@@ -2,8 +2,13 @@
 #include "glew.h"
 #include <stdio.h>
 #include <math.h>
+#include <string>
 #pragma comment(lib,"opengl32.lib")
 #pragma comment(lib,"glew32.lib")
+
+const std::string RESOURCE_ROOT = "LearnShader/resource/";
+const std::string SHADER_ROOT = "LearnShader/resource/shader/";
+const std::string IMAGE_ROOT = "LearnShader/resource/image/";
 
 LRESULT CALLBACK GLWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -42,8 +47,8 @@ GLuint CreateProgram(const char*vsPath,const char*fsPath)
 	GLuint vsShader, fsShader;
 	vsShader = glCreateShader(GL_VERTEX_SHADER);
 	fsShader = glCreateShader(GL_FRAGMENT_SHADER);
-	const char*vsCode = LoadFileContent("shader/framework/sample.vs");
-	const char*fsCode = LoadFileContent("shader/framework/sample.fs");
+	const char*vsCode = LoadFileContent((SHADER_ROOT + "sample.vs").c_str());
+	const char*fsCode = LoadFileContent((SHADER_ROOT + "sample.fs").c_str());
 	glShaderSource(vsShader, 1, &vsCode, nullptr);
 	glShaderSource(fsShader, 1, &fsCode, nullptr);
 	glCompileShader(vsShader);
@@ -145,7 +150,7 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	glewInit();
 	unsigned char*imageData;
 	int width, height;
-	imageData = LoadBMP("test.bmp", width, height);
+	imageData = LoadBMP((IMAGE_ROOT + "sample.bmp").c_str(), width, height);
 
 	GLuint mainTexture;
 	glGenTextures(1, &mainTexture);

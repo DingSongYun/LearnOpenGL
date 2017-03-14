@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\learnshader">
+      <UniqueIdentifier>{a4904c97-ae88-4faa-8bcd-d0812e683196}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\learnshader\shader">
+      <UniqueIdentifier>{d62bcce4-c561-420c-ac8d-3b06907e25b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\learnshader\image">
+      <UniqueIdentifier>{6f69f782-edb3-40c1-8f82-5bcaa4d09cdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\learnshader\model">
+      <UniqueIdentifier>{a06f1152-c474-4446-b211-631736d893a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\learnshader">
+      <UniqueIdentifier>{26c74a64-a03c-49d9-9d34-b98a22430a02}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LearnShader\resource\shader\sample.fs">
+      <Filter>Resource Files\learnshader\shader</Filter>
+    </None>
+    <None Include="LearnShader\resource\shader\sample.vs">
+      <Filter>Resource Files\learnshader\shader</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="LearnShader\resource\image\sample.bmp">
+      <Filter>Resource Files\learnshader\image</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LearnShader\glew.h">
+      <Filter>Source Files\learnshader</Filter>
+    </ClInclude>
+    <ClInclude Include="LearnShader\wglew.h">
+      <Filter>Source Files\learnshader</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LearnShader\main.cpp">
+      <Filter>Source Files\learnshader</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

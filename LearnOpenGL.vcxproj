@@ -19,22 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Shader\FrameWork\glew.h" />
-    <ClInclude Include="Shader\FrameWork\wglew.h" />
+    <None Include="LearnShader\resource\shader\sample.fs" />
+    <None Include="LearnShader\resource\shader\sample.vs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\FrameWork\glew32.dll" />
-    <None Include="Shader\FrameWork\sample.fs" />
-    <None Include="Shader\FrameWork\sample.vs" />
+    <Image Include="LearnShader\resource\image\sample.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="Shader\FrameWork\glew32.lib" />
+    <ClInclude Include="LearnShader\glew.h" />
+    <ClInclude Include="LearnShader\wglew.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Shader\FrameWork\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Shader\FrameWork\test.bmp" />
+    <ClCompile Include="LearnShader\main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8ADB4342-B01D-4ED6-B5BF-F56CED838510}</ProjectGuid>
