@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <string>
+#include "../GPUProgram/Utils.h"
+#include "../GPUProgram/GPUProgram.h"
 #pragma comment(lib,"opengl32.lib")
 #pragma comment(lib,"glew32.lib")
 
@@ -21,54 +23,12 @@ LRESULT CALLBACK GLWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd,msg,wParam,lParam);
 }
 
-char* LoadFileContent(const char*path)
-{
-	char *pFileContent = NULL;
-	FILE*pFile = fopen(path, "rb");
-	if (pFile)
-	{
-		fseek(pFile, 0, SEEK_END);
-		int nLen = ftell(pFile);
-		if (nLen > 0)
-		{
-			rewind(pFile);
-			pFileContent = new char[nLen + 1];
-			fread(pFileContent,1,nLen,pFile);
-			pFileContent[nLen] = '\0';
-		}
-		fclose(pFile);
-	}
-	return pFileContent;
-}
-
-GLuint CreateProgram(const char*vsPath,const char*fsPath)
-{
-	GLuint program=glCreateProgram();
-	GLuint vsShader, fsShader;
-	vsShader = glCreateShader(GL_VERTEX_SHADER);
-	fsShader = glCreateShader(GL_FRAGMENT_SHADER);
-	const char*vsCode = LoadFileContent((SHADER_ROOT + "sample.vs").c_str());
-	const char*fsCode = LoadFileContent((SHADER_ROOT + "sample.fs").c_str());
-	glShaderSource(vsShader, 1, &vsCode, nullptr);
-	glShaderSource(fsShader, 1, &fsCode, nullptr);
-	glCompileShader(vsShader);
-	glCompileShader(fsShader);
-	glAttachShader(program, vsShader);
-	glAttachShader(program, fsShader);
-	glLinkProgram(program);
-	glDetachShader(program, vsShader);
-	glDetachShader(program, fsShader);
-	glDeleteShader(vsShader);
-	glDeleteShader(fsShader);
-	return program;
-}
-
 float* CreatePerspective(float fov, float aspect, float zNear, float zFar)
 {
 	float *matrix = new float[16];
 	float half = fov / 2.0f;
 	float randiansOfHalf = (half / 180.0f)*3.14f;
-	float yscale = cos(randiansOfHalf) / sin(randiansOfHalf);
+	float yscale = cosf(randiansOfHalf) / sinf(randiansOfHalf);
 	float xscale = yscale / aspect;
 	memset(matrix, 0, sizeof(float) * 16);
 	matrix[0] = xscale;
@@ -161,7 +121,12 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
 	glBindTexture(GL_TEXTURE_2D,0);
 
-	GLuint program = CreateProgram("sample.vs", "sample.fs");
+    GPUProgram gpuProgram;
+    gpuProgram.AttachShader(GL_VERTEX_SHADER, (SHADER_ROOT + "sample.vs").c_str());
+    gpuProgram.AttachShader(GL_FRAGMENT_SHADER, (SHADER_ROOT + "sample.fs").c_str());
+    gpuProgram.Link();
+
+    GLuint program = gpuProgram.mProgram;
 	GLint posLoc, colorLoc,texcoordLoc,mLoc,vLoc,ploc,textureLoc;
 	posLoc = glGetAttribLocation(program, "pos");
 	colorLoc = glGetAttribLocation(program, "color");

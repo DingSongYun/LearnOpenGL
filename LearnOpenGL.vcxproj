@@ -26,10 +26,14 @@
     <Image Include="LearnShader\resource\image\sample.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GPUProgram\GPUProgram.h" />
+    <ClInclude Include="GPUProgram\Utils.h" />
     <ClInclude Include="LearnShader\glew.h" />
     <ClInclude Include="LearnShader\wglew.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GPUProgram\GPUProgram.cpp" />
+    <ClCompile Include="GPUProgram\Utils.cpp" />
     <ClCompile Include="LearnShader\main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
