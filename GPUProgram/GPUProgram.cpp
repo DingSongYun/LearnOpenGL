@@ -73,3 +73,35 @@ void GPUProgram::Link()
         mAttachShaders.pop();
     }
 }
+
+void GPUProgram::DetectAttribute(const char* attributeName)
+{
+    GLint loc = glGetAttribLocation(mProgram, attributeName);
+
+    if(loc != -1)
+    {
+        mLocations.insert(std::pair<std::string, GLint>(attributeName, loc));
+    }
+}
+
+void GPUProgram::DetectUniform(const char* attributeName)
+{
+    GLint loc = glGetUniformLocation(mProgram, attributeName);
+
+    if(loc != -1)
+    {
+        mLocations.insert(std::pair<std::string, GLint>(attributeName, loc));
+    }
+}
+
+GLint GPUProgram::getLocation(const char* name)
+{
+    auto iter = mLocations.find(name);
+    if (iter == mLocations.end())
+    {
+        return -1;
+    }
+
+    return iter->second;
+}
+

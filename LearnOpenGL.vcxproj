@@ -27,12 +27,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GPUProgram\GPUProgram.h" />
+    <ClInclude Include="GPUProgram\ObjModel.h" />
     <ClInclude Include="GPUProgram\Utils.h" />
     <ClInclude Include="LearnShader\glew.h" />
     <ClInclude Include="LearnShader\wglew.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GPUProgram\GPUProgram.cpp" />
+    <ClCompile Include="GPUProgram\ObjModel.cpp" />
     <ClCompile Include="GPUProgram\Utils.cpp" />
     <ClCompile Include="LearnShader\main.cpp" />
   </ItemGroup>
@@ -113,6 +115,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>editbin /subsystem:console $(OutDir)$(ProjectName).exe</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

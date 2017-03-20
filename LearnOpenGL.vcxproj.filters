@@ -58,6 +58,9 @@
     <ClInclude Include="GPUProgram\Utils.h">
       <Filter>Source Files\GPUProgram</Filter>
     </ClInclude>
+    <ClInclude Include="GPUProgram\ObjModel.h">
+      <Filter>Source Files\GPUProgram</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LearnShader\main.cpp">
@@ -67,6 +70,9 @@
       <Filter>Source Files\GPUProgram</Filter>
     </ClCompile>
     <ClCompile Include="GPUProgram\Utils.cpp">
+      <Filter>Source Files\GPUProgram</Filter>
+    </ClCompile>
+    <ClCompile Include="GPUProgram\ObjModel.cpp">
       <Filter>Source Files\GPUProgram</Filter>
     </ClCompile>
   </ItemGroup>

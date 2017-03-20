@@ -5,12 +5,16 @@
 #include <string>
 #include "../GPUProgram/Utils.h"
 #include "../GPUProgram/GPUProgram.h"
+#include "../GPUProgram/ObjModel.h"
+#include "../Glm/glm.hpp"
+#include "../Glm/ext.hpp"
 #pragma comment(lib,"opengl32.lib")
 #pragma comment(lib,"glew32.lib")
 
 const std::string RESOURCE_ROOT = "LearnShader/resource/";
 const std::string SHADER_ROOT = "LearnShader/resource/shader/";
 const std::string IMAGE_ROOT = "LearnShader/resource/image/";
+const std::string MODEL_ROOT = "LearnShader/resource/model/";
 
 LRESULT CALLBACK GLWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -37,38 +41,6 @@ float* CreatePerspective(float fov, float aspect, float zNear, float zFar)
 	matrix[11] = -1.0f;
 	matrix[14] = (2.0f*zNear*zFar) / (zNear - zFar);
 	return matrix;
-}
-
-unsigned char* LoadBMP(const char*path, int &width, int &height)
-{
-	unsigned char*imageData=nullptr;
-	FILE *pFile = fopen(path, "rb");
-	if (pFile)
-	{
-		BITMAPFILEHEADER bfh;
-		fread(&bfh, sizeof(BITMAPFILEHEADER), 1, pFile);
-		if (bfh.bfType==0x4D42)
-		{
-			BITMAPINFOHEADER bih;
-			fread(&bih, sizeof(BITMAPINFOHEADER), 1, pFile);
-			width = bih.biWidth;
-			height = bih.biHeight;
-			int pixelCount = width*height * 3;
-			imageData = new unsigned char[pixelCount];
-			fseek(pFile, bfh.bfOffBits, SEEK_SET);
-			fread(imageData, 1, pixelCount, pFile);
-
-			unsigned char temp;
-			for (int i=0;i<pixelCount;i+=3)
-			{
-				temp = imageData[i+2];
-				imageData[i + 2] = imageData[i];
-				imageData[i] = temp;
-			}
-		}
-		fclose(pFile);
-	}
-	return imageData;
 }
 
 INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
@@ -126,17 +98,17 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     gpuProgram.AttachShader(GL_FRAGMENT_SHADER, (SHADER_ROOT + "sample.fs").c_str());
     gpuProgram.Link();
 
-    GLuint program = gpuProgram.mProgram;
-	GLint posLoc, colorLoc,texcoordLoc,mLoc,vLoc,ploc,textureLoc;
-	posLoc = glGetAttribLocation(program, "pos");
-	colorLoc = glGetAttribLocation(program, "color");
-	texcoordLoc = glGetAttribLocation(program, "texcoord");
+    gpuProgram.DetectAttribute("pos");
+    gpuProgram.DetectAttribute("texcoord");
+    gpuProgram.DetectAttribute("normal");
 
-	mLoc = glGetUniformLocation(program,"M");
-	vLoc = glGetUniformLocation(program,"V");
-	ploc = glGetUniformLocation(program, "P");
-	textureLoc = glGetUniformLocation(program, "U_MainTexture");
-
+    gpuProgram.DetectUniform("M");
+    gpuProgram.DetectUniform("V");
+    gpuProgram.DetectUniform("P");
+    gpuProgram.DetectUniform("U_MainTexture");
+    //init 3D model
+    ObjModel model;
+    model.Init((MODEL_ROOT + "Cube.obj").c_str());
 
 	float identity[] = {
 		1.0f,0,0,0,
@@ -144,69 +116,8 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		0,0,1.0f,0,
 		0,0,0,1.0f
 	};
+    glm::mat4 modelMatrix = glm::translate<float>(0.0f, 0.0f, -2.0f) * glm::rotate<float>(-30.0f, 0.0f, 1.0f, 1.0f); // ïΩà⁄ + ê˘?
 	float *projection = CreatePerspective(50.0f,800.0f/600.0f,0.1f,1000.0f);
-
-
-	struct Vertex
-	{
-		float v[3];
-		float rgba[4];
-		float texcoord[4];
-	};
-
-	Vertex vertex[4];
-	memset(vertex, 0, sizeof(Vertex) * 4);
-	vertex[0].v[0] = 0.0f;
-	vertex[0].v[1] = 0.0f;
-	vertex[0].v[2] = -30.0f;
-	vertex[0].rgba[0] = 1.0f;
-	vertex[0].rgba[1] = 1.0f; 
-	vertex[0].rgba[2] = 1.0f; 
-	vertex[0].rgba[3] = 1.0f;
-	vertex[0].texcoord[0] = 0.0f;
-	vertex[0].texcoord[1] = 0.0f;
-
-	vertex[1].v[0] = 10.0f;
-	vertex[1].v[1] = 0.0f;
-	vertex[1].v[2] = -30.0f;
-	vertex[1].rgba[0] = 1.0f;
-	vertex[1].rgba[1] = 1.0f;
-	vertex[1].rgba[2] = 1.0f;
-	vertex[1].rgba[3] = 1.0f;
-	vertex[1].texcoord[0] = 1.0f;
-	vertex[1].texcoord[1] = 0.0f;
-
-	vertex[2].v[0] = 10.0f;
-	vertex[2].v[1] = 10.0f;
-	vertex[2].v[2] = -30.0f;
-	vertex[2].rgba[0] = 1.0f;
-	vertex[2].rgba[1] = 1.0f;
-	vertex[2].rgba[2] = 1.0f;
-	vertex[2].rgba[3] = 1.0f;
-	vertex[2].texcoord[0] = 1.0f;
-	vertex[2].texcoord[1] = 1.0f;
-
-	vertex[3].v[0] = 0.0f;
-	vertex[3].v[1] = 10.0f;
-	vertex[3].v[2] = -30.0f;
-	vertex[3].rgba[0] = 1.0f;
-	vertex[3].rgba[1] = 1.0f;
-	vertex[3].rgba[2] = 1.0f;
-	vertex[3].rgba[3] = 1.0f;
-	vertex[3].texcoord[0] = 0.0f;
-	vertex[3].texcoord[1] = 1.0f;
-
-	unsigned short indexes[] = {0,1,2,3};
-	GLuint vbo,ibo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, vertex, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glGenBuffers(1, &ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * 4, indexes, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	glClearColor(41.0f/255.0f,  71.0f/255.0f, 121.0f / 255.0f, 1.0f);
 
@@ -225,30 +136,22 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // ?ûyñÕéÆ
+        glEnable(GL_DEPTH_TEST);
 
-		glUseProgram(program);
-		glUniformMatrix4fv(mLoc, 1,GL_FALSE,identity);
-		glUniformMatrix4fv(vLoc, 1, GL_FALSE, identity);
-		glUniformMatrix4fv(ploc, 1, GL_FALSE, projection);
+		glUseProgram(gpuProgram.mProgram);
+		glUniformMatrix4fv(gpuProgram.getLocation("M"), 1,GL_FALSE,glm::value_ptr(modelMatrix));
+		glUniformMatrix4fv(gpuProgram.getLocation("V"), 1, GL_FALSE, identity);
+		glUniformMatrix4fv(gpuProgram.getLocation("P"), 1, GL_FALSE, projection);
 		
-		glUniform1i(textureLoc, 0);
+		glUniform1i(gpuProgram.getLocation("U_MainTexture"), 0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glEnableVertexAttribArray(posLoc);
-		glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-
-		glEnableVertexAttribArray(colorLoc);
-		glVertexAttribPointer(colorLoc, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(float)*3));
-
-		glEnableVertexAttribArray(texcoordLoc);
-		glVertexAttribPointer(texcoordLoc, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(float) * 7));
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glDrawElements(GL_QUADS, 4, GL_UNSIGNED_SHORT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        model.BindModel(gpuProgram.getLocation("pos"), gpuProgram.getLocation("texcoord"), gpuProgram.getLocation("normal"));
+        model.Draw();
 
 		glUseProgram(0);
+        glFinish(); // TODO: ?ò¢îüêîëzä±èY?
 		SwapBuffers(dc);
 	}
 	return 0;
