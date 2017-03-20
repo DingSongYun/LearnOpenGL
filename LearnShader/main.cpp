@@ -80,18 +80,9 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	wglMakeCurrent(dc, rc);
 
 	glewInit();
-	unsigned char*imageData;
-	int width, height;
-	imageData = LoadBMP((IMAGE_ROOT + "sample.bmp").c_str(), width, height);
 
-	GLuint mainTexture;
-	glGenTextures(1, &mainTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-	glBindTexture(GL_TEXTURE_2D,0);
+	GLuint mainTexture = CreateTextureFromFile((IMAGE_ROOT + "sample.bmp").c_str());
+	GLuint woodTexture = CreateTextureFromFile((IMAGE_ROOT + "wood.bmp").c_str());
 
     GPUProgram gpuProgram;
     gpuProgram.AttachShader(GL_VERTEX_SHADER, (SHADER_ROOT + "sample.vs").c_str());
@@ -106,6 +97,7 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     gpuProgram.DetectUniform("V");
     gpuProgram.DetectUniform("P");
     gpuProgram.DetectUniform("U_MainTexture");
+    gpuProgram.DetectUniform("U_Wood");
     //init 3D model
     ObjModel model;
     model.Init((MODEL_ROOT + "Cube.obj").c_str());
@@ -144,8 +136,15 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		glUniformMatrix4fv(gpuProgram.getLocation("M"), 1,GL_FALSE,glm::value_ptr(modelMatrix));
 		glUniformMatrix4fv(gpuProgram.getLocation("V"), 1, GL_FALSE, identity);
 		glUniformMatrix4fv(gpuProgram.getLocation("P"), 1, GL_FALSE, projection);
-		
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mainTexture);
 		glUniform1i(gpuProgram.getLocation("U_MainTexture"), 0);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, woodTexture);
+		glUniform1i(gpuProgram.getLocation("U_Wood"), 1); // please pay attention to the param '1'. which indicate the location of texture on GPU
+		
 
         model.BindModel(gpuProgram.getLocation("pos"), gpuProgram.getLocation("texcoord"), gpuProgram.getLocation("normal"));
         model.Draw();
